@@ -1,0 +1,44 @@
+import ping3
+import time
+
+def ping_node(node, count=5):
+    """
+    Ping a node multiple times and return the average round-trip time.
+
+    Args:
+        node (str): The IP address or hostname of the node to ping.
+        count (int): Number of times to ping the node.
+
+    Returns:
+        float: Average round-trip time in milliseconds.
+    """
+    total_time = 0
+    for _ in range(count):
+        try:
+            ping_time = ping3.ping(node, timeout=2)
+            if ping_time is not None:
+                total_time += ping_time
+            else:
+                print(f"Request timed out for {node}")
+        except ping3.errors.PingError as e:
+            print(f"Error pinging {node}: {e}")
+
+    if total_time > 0:
+        return total_time / count
+    else:
+        return None
+
+def main():
+    nodes = ['192.168.1.1', '192.168.1.2', '192.168.1.3']  # Add IP addresses or hostnames of the nodes to ping
+    num_pings = 5  # Number of pings per node
+
+    for node in nodes:
+        print(f"Pinging {node}...")
+        avg_ping_time = ping_node(node, count=num_pings)
+        if avg_ping_time is not None:
+            print(f"Avg. round-trip time for {node}: {avg_ping_time:.2f} ms")
+        else:
+            print(f"Unable to ping {node}")
+
+if __name__ == "__main__":
+    main()
